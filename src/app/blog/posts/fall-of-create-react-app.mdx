@@ -1,6 +1,7 @@
 ---
 title: "The Fall of Create-React-App: What Went Wrong and What’s Next?"
 publishedAt: "2025-03-13"
+image: "/images/blog/create-react-app.png"
 summary: "A deep dive into the decline of Create-React-App, its limitations, and why modern tools like Vite, Next.js, and Remix are the future of React development."
 tag: "ReactJs"
 ---
@@ -122,9 +123,18 @@ These tools offer significant advantages over CRA, making them the preferred cho
 To move an existing CRA project to Vite:
 
 1. Install Vite:
-   ```sh
-   npm create vite@latest my-app --template react
-   ```
+   <CodeBlock
+     className="my-24"
+     compact
+     codeInstances={[
+       {
+         code: "npm create vite@latest my-app --template react",
+         label: "Vite",
+         language: "sh",
+       },
+     ]}
+     copyButton
+   />
 2. Move dependencies from `package.json` and adjust imports.
 3. Replace Webpack-specific configurations with Vite’s `vite.config.js`.
 
