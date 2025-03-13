@@ -1,0 +1,263 @@
+---
+title: "Performance Optimization in React: Best Practices and Techniques"
+publishedAt: "2025-03-12"
+summary: "A comprehensive guide to optimizing React performance with best practices, code examples, and efficient rendering techniques."
+tag: "ReactJs,Efficiency"
+---
+
+React is known for its efficiency, but as applications grow, performance issues can arise. In this guide, we'll explore practical techniques to optimize React applications for better speed and responsiveness.
+
+## 1. Understanding React’s Rendering Process
+
+React updates the UI efficiently using the Virtual DOM and a process called reconciliation. However, unnecessary re-renders can slow down the app. React Fiber, the core reconciliation algorithm, improves this by scheduling rendering work efficiently.
+
+### Example: Unnecessary re-renders
+
+#### **Wrong Approach:**
+
+```jsx
+const Component = ({ value }) => {
+  console.log("Component re-rendered");
+  return <p>{value}</p>;
+};
+
+export default function App() {
+  const [count, setCount] = React.useState(0);
+  return (
+    <div>
+      <Component value={count} />
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+}
+```
+
+_Even if **`value`** doesn’t change, the component re-renders._
+
+#### **Right Approach:**
+
+```jsx
+const Component = React.memo(({ value }) => {
+  console.log("Component re-rendered");
+  return <p>{value}</p>;
+});
+```
+
+Using `React.memo()`, the component only re-renders when props change.
+
+---
+
+## 2. Avoiding Unnecessary Re-renders
+
+Every component update consumes resources, so minimizing unnecessary renders is key.
+
+### Using `useCallback` and `useMemo`
+
+#### **Wrong Approach:**
+
+```jsx
+const handleClick = () => {
+  console.log("Button clicked");
+};
+```
+
+This function is re-created on every render, causing unnecessary updates.
+
+#### **Right Approach:**
+
+```jsx
+const handleClick = useCallback(() => {
+  console.log("Button clicked");
+}, []);
+```
+
+`useCallback` prevents re-creation of functions unless dependencies change.
+
+---
+
+## 3. Efficient State Management
+
+Use local state only when necessary and avoid unnecessary re-renders from state changes.
+
+### Using Context Efficiently
+
+#### **Wrong Approach:**
+
+```jsx
+const MyContext = React.createContext();
+const Parent = () => {
+  const [state, setState] = useState(0);
+  return (
+    <MyContext.Provider value={{ state, setState }}>
+      <Child />
+    </MyContext.Provider>
+  );
+};
+```
+
+Changes in `state` cause all consumers to re-render.
+
+#### **Right Approach:**
+
+Use separate context providers or `useReducer`.
+
+```jsx
+const MyContext = React.createContext();
+const Parent = () => {
+  const state = useState(0);
+  return (
+    <MyContext.Provider value={state}>
+      <Child />
+    </MyContext.Provider>
+  );
+};
+```
+
+---
+
+## 4. Code Splitting & Lazy Loading
+
+Use code splitting to avoid loading unnecessary code upfront.
+
+#### **Wrong Approach:**
+
+```jsx
+import HeavyComponent from "./HeavyComponent";
+function App() {
+  return <HeavyComponent />;
+}
+```
+
+This loads the entire component immediately.
+
+#### **Right Approach:**
+
+```jsx
+const HeavyComponent = React.lazy(() => import("./HeavyComponent"));
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HeavyComponent />
+    </Suspense>
+  );
+}
+```
+
+Using `React.lazy()` and `Suspense` defers loading until needed.
+
+---
+
+## 5. Optimizing Lists with Virtualization
+
+Rendering large lists can slow down performance. Instead, use virtualization.
+
+#### **Wrong Approach:**
+
+```jsx
+{
+  items.map((item) => <div key={item.id}>{item.name}</div>);
+}
+```
+
+#### **Right Approach:**
+
+```jsx
+import { FixedSizeList as List } from "react-window";
+<List height={400} width={300} itemSize={35} itemCount={items.length}>
+  {({ index, style }) => <div style={style}>{items[index].name}</div>}
+</List>;
+```
+
+Using `react-window`, only visible items are rendered.
+
+---
+
+## 6. Efficient Event Handling
+
+Use throttling and debouncing for event-heavy interactions.
+
+#### **Wrong Approach:**
+
+```jsx
+const handleScroll = () => {
+  console.log("Scrolling...");
+};
+window.addEventListener("scroll", handleScroll);
+```
+
+#### **Right Approach:**
+
+```jsx
+import { debounce } from "lodash";
+const handleScroll = debounce(() => {
+  console.log("Scrolling...");
+}, 300);
+window.addEventListener("scroll", handleScroll);
+```
+
+Using `lodash` debounce reduces event firing frequency.
+
+---
+
+## 7. Optimizing Images and Static Assets
+
+Use modern image formats and lazy loading.
+
+#### **Wrong Approach:**
+
+```jsx
+<img src="large-image.jpg" width="500" />
+```
+
+#### **Right Approach:**
+
+```jsx
+<img src="image.webp" loading="lazy" width="500" />
+```
+
+WebP format and lazy loading reduce load time.
+
+---
+
+## 8. Server-Side Rendering (SSR) & Static Site Generation (SSG)
+
+Use SSR or SSG with Next.js for improved performance.
+
+#### **Wrong Approach:**
+
+```jsx
+function Page() {
+  const [data, setData] = useState(null);
+  useEffect(() => {
+    fetch("/api/data")
+      .then((res) => res.json())
+      .then(setData);
+  }, []);
+}
+```
+
+This fetches data on the client-side, delaying page load.
+
+#### **Right Approach:**
+
+```jsx
+export async function getServerSideProps() {
+  const res = await fetch("/api/data");
+  const data = await res.json();
+  return { props: { data } };
+}
+```
+
+SSR fetches data before sending the page to the client.
+
+---
+
+## 9. Performance Monitoring and Profiling
+
+Use React DevTools Profiler and Lighthouse for performance tracking.
+
+---
+
+## Conclusion
+
+By applying these techniques, you can significantly improve your React app’s performance, leading to faster load times, smoother interactions, and a better user experience.
