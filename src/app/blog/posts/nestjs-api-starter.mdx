@@ -1,0 +1,204 @@
+---
+title: "Building a Scalable NestJS API Starter with Authentication"
+publishedAt: "2025-03-21"
+image: "/images/blog/nestjs.png"
+summary: "Learn how to set up a secure and scalable NestJS API with authentication, JWT refresh tokens, email verification, and API documentation using this starter template."
+tag: "API, NextJS"
+---
+
+When starting a new backend project, setting up authentication, API versioning, and best practices can take time. To simplify this, we created a **NestJS API Starter**, a ready-to-use template that includes **authentication, JWT refresh tokens, email verification, API documentation, and more**. This blog will walk you through how it works and how you can use it to jumpstart your next NestJS project.
+
+## Why Use a NestJS Starter Template?
+
+### 1. Saves Development Time
+
+Instead of setting up authentication, middleware, and API structure from scratch, you can use this template and focus on building features.
+
+### 2. Follows Best Practices
+
+The template follows industry standards such as **JWT authentication, password hashing, error handling, and modular architecture**.
+
+### 3. Built-in Security Features
+
+It includes **refresh token support** and **email verification**, ensuring a secure foundation for your API.
+
+### 4. Easily Scalable & Maintainable
+
+The codebase is structured in a modular way, making it easy to **add new features**, **modify existing ones**, and **scale your application** as your project grows.
+
+## Features of This NestJS API Starter
+
+### ✅ Authentication & Security
+
+- **JWT-based authentication** for secure user sessions
+- **User registration & login** with password hashing
+- **Email verification** using one-time tokens
+- **Forgot password & reset password functionality**
+- **Access & Refresh tokens for session management**
+
+### ✅ API Structure & Documentation
+
+- **RESTful API structure with versioning** to support future updates
+- **Swagger UI for API documentation** to test and explore endpoints
+- **Global error handling & logging** for consistent error responses
+
+### ✅ Modular & Scalable Codebase
+
+- **Separation of concerns with services, controllers, and DTOs**
+- **Easily extendable architecture** for adding new features
+- **Environment-based configuration** to manage different setups
+
+## Getting Started with the Template
+
+📦 Installation
+
+npm Package: [nestjs-api-starter](https://www.npmjs.com/package/nestjs-api-starter)
+
+GitHub Repository: [techminion/nestjs-api-starter](https://github.com/techminion/nestjs-api-starter.git)
+
+### **1. Create a New Project Using npx**
+
+You can quickly scaffold a new project using `npx`:
+
+<CodeBlock
+  className="my-24"
+  compact
+  codeInstances={[
+    {
+      code: "npx nestjs-api-starter my-app\ncd my-app\nnpm install",
+      label: "create",
+      language: "bash",
+    },
+  ]}
+  copyButton
+/>
+
+This will create a new NestJS API project in the `my-app` directory.
+
+### **2. Configure Environment Variables**
+
+Create a `.env` file in the root directory same as `.env.example`
+
+### **3. Run the Application**
+
+<CodeBlock
+  className="my-24"
+  compact
+  codeInstances={[
+    {
+      code: "npm run start:dev",
+      label: "create",
+      language: "bash",
+    },
+  ]}
+  copyButton
+/>
+
+Your API will now be running on `http://localhost:3000`
+
+## API Endpoints
+
+### **Auth Routes**
+
+<table border="1">
+  <tr>
+    <th>Method</th>
+    <th>Endpoint</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>`POST`</td>
+    <td>`/auth/signup`</td>
+    <td>Register a new user</td>
+  </tr>
+  <tr>
+    <td>`POST`</td>
+    <td>`/auth/login`</td>
+    <td>User login, returns JWT token</td>
+  </tr>
+  <tr>
+    <td>`GET`</td>
+    <td>`/auth/verify?token=...`</td>
+    <td>Verify email address</td>
+  </tr>
+  <tr>
+    <td>`POST`</td>
+    <td>`/auth/forgot-password`</td>
+    <td>Send password reset email</td>
+  </tr>
+  <tr>
+    <td>`POST`</td>
+    <td>`/auth/reset-password`</td>
+    <td>Reset password using token</td>
+  </tr>
+  <tr>
+    <td>`POST`</td>
+    <td>`/auth/refresh-token`</td>
+    <td>Get a new access token</td>
+  </tr>
+</table>
+
+### **User Routes**
+
+<table border="1">
+  <tr>
+    <th>Method</th>
+    <th>Endpoint</th>
+    <th>Description</th>
+  </tr>
+  <tr>
+    <td>`GET`</td>
+    <td>`/users/profile`</td>
+    <td>Get authenticated user profile</td>
+  </tr>
+</table>
+
+## Using Swagger for API Documentation
+
+This template comes with **Swagger UI** for easy API testing and documentation. You can access it at: http://localhost:3000/api/docs
+
+## How JWT Refresh Tokens Work in This Template
+
+Instead of requiring users to log in frequently, the refresh token mechanism allows them to request a new access token when the old one expires.
+
+### **How it Works:**
+
+1. **User logs in** and receives an **access token** (expires in 15 min) and a **refresh token** (expires in 7 days).
+2. **When the access token expires**, the client sends a request to `/auth/refresh-token` with the refresh token.
+3. **The server verifies the refresh token** and, if valid, issues a **new access and refresh token**.
+4. **If the refresh token is invalid or expired**, the user must log in again.
+
+### **Why Use Refresh Tokens?**
+
+- **Enhanced Security:** Access tokens are short-lived to minimize exposure risk.
+- **Better User Experience:** Users remain logged in without frequent re-authentication.
+- **Prevents Overuse of Credentials:** Users don't need to send their passwords frequently.
+
+## Extending the Template
+
+This template provides a **strong foundation**, but you may want to extend it with additional features:
+
+- **Social Authentication (Google, GitHub, etc.)**
+- **Two-Factor Authentication (2FA)**
+- **Rate Limiting & IP Blocking for Security**
+- **GraphQL Support for API Flexibility**
+- **Multi-Tenant Support for SaaS Applications**
+
+## Conclusion
+
+The **NestJS API Starter** is a powerful boilerplate that helps developers quickly set up a secure and scalable backend. With authentication, API versioning, and documentation already included, you can focus on building features instead of setting up the basics. Try it out today using:
+
+<CodeBlock
+  className="my-24"
+  compact
+  codeInstances={[
+    {
+      code: "npx nestjs-api-starter my-app",
+      label: "create",
+      language: "bash",
+    },
+  ]}
+  copyButton
+/>
+
+If you have suggestions or improvements, feel free to contribute to the project!
