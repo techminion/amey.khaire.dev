@@ -123,18 +123,9 @@ These tools offer significant advantages over CRA, making them the preferred cho
 To move an existing CRA project to Vite:
 
 1. Install Vite:
-   <CodeBlock
-     className="my-24"
-     compact
-     codeInstances={[
-       {
-         code: "npm create vite@latest my-app --template react",
-         label: "Vite",
-         language: "sh",
-       },
-     ]}
-     copyButton
-   />
+   ```sh
+   npm create vite@latest my-app --template react
+   ```
 2. Move dependencies from `package.json` and adjust imports.
 3. Replace Webpack-specific configurations with Vite’s `vite.config.js`.
 

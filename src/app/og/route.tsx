@@ -6,7 +6,7 @@ export const runtime = "edge";
 
 export async function GET(request: Request) {
   let url = new URL(request.url);
-  let title = url.searchParams.get("title") || "Portfolio";
+  let title = url.searchParams.get("title") || person.name;
   const font = fetch(new URL("../../../public/fonts/Inter.ttf", import.meta.url)).then((res) =>
     res.arrayBuffer(),
   );
@@ -19,7 +19,7 @@ export async function GET(request: Request) {
         width: "100%",
         height: "100%",
         padding: "8rem",
-        background: "#151515",
+        background: "#111418",
       }}
     >
       <div
@@ -30,7 +30,7 @@ export async function GET(request: Request) {
           gap: "4rem",
           fontFamily: "Inter",
           fontStyle: "normal",
-          color: "white",
+          color: "#e6e8eb",
         }}
       >
         <span

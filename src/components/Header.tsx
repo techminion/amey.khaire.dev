@@ -7,7 +7,7 @@ import { Fade, Flex, Line, ToggleButton } from "@/once-ui/components";
 import styles from "@/components/Header.module.scss";
 
 import { routes, display } from "@/app/resources";
-import { person, home, about, blog, work, gallery } from "@/app/resources/content";
+import { person, home, about, blog } from "@/app/resources/content";
 
 type TimeDisplayProps = {
   timeZone: string;
@@ -92,23 +92,6 @@ export const Header = () => {
                   />
                 </>
               )}
-              {routes["/work"] && (
-                <>
-                  <ToggleButton
-                    className="s-flex-hide"
-                    prefixIcon="grid"
-                    href="/work"
-                    label={work.label}
-                    selected={pathname.startsWith("/work")}
-                  />
-                  <ToggleButton
-                    className="s-flex-show"
-                    prefixIcon="grid"
-                    href="/work"
-                    selected={pathname.startsWith("/work")}
-                  />
-                </>
-              )}
               {routes["/blog"] && (
                 <>
                   <ToggleButton
@@ -123,23 +106,6 @@ export const Header = () => {
                     prefixIcon="book"
                     href="/blog"
                     selected={pathname.startsWith("/blog")}
-                  />
-                </>
-              )}
-              {routes["/gallery"] && (
-                <>
-                  <ToggleButton
-                    className="s-flex-hide"
-                    prefixIcon="gallery"
-                    href="/gallery"
-                    label={gallery.label}
-                    selected={pathname.startsWith("/gallery")}
-                  />
-                  <ToggleButton
-                    className="s-flex-show"
-                    prefixIcon="gallery"
-                    href="/gallery"
-                    selected={pathname.startsWith("/gallery")}
                   />
                 </>
               )}

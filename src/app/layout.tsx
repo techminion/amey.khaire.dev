@@ -19,8 +19,8 @@ export async function generateMetadata() {
     title: home.title,
     description: home.description,
     openGraph: {
-      title: `${person.firstName}'s Portfolio`,
-      description: "Portfolio website showcasing my work.",
+      title: home.title,
+      description: home.description,
       url: baseURL,
       siteName: `${person.firstName}'s Portfolio`,
       locale: "en_US",
@@ -89,7 +89,7 @@ export default async function RootLayout({ children }: RootLayoutProps) {
           primary.variable,
           secondary ? secondary.variable : "",
           tertiary ? tertiary.variable : "",
-          code.variable
+          code.variable,
         )}
       >
         <ToastProvider>
