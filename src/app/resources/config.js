@@ -3,7 +3,7 @@ const baseURL = "amey.khaire.dev";
 const routes = {
   "/": true,
   "/about": true,
-  "/work": true,
+  "/work": false,
   "/blog": true,
 };
 
