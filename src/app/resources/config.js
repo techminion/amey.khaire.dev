@@ -14,8 +14,8 @@ const protectedRoutes = {};
 const style = {
   theme: "dark", // dark | light
   neutral: "slate", // sand | gray | slate
-  brand: "cyan", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-  accent: "cyan", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+  brand: "emerald", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+  accent: "emerald", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
   solid: "contrast", // color | contrast
   solidStyle: "flat", // flat | plastic
   border: "conservative", // rounded | playful | conservative
@@ -25,13 +25,13 @@ const style = {
 
 const effects = {
   mask: {
-    cursor: false,
+    cursor: true,
     x: 0,
     y: 0,
     radius: 75,
   },
   gradient: {
-    display: false,
+    display: true,
     x: 50,
     y: 0,
     width: 100,
@@ -68,13 +68,13 @@ const mailchimp = {
   action: "https://url/subscribe/post?parameters",
   effects: {
     mask: {
-      cursor: false,
+      cursor: true,
       x: 100,
       y: 0,
       radius: 100,
     },
     gradient: {
-      display: false,
+      display: true,
       x: 100,
       y: 50,
       width: 100,

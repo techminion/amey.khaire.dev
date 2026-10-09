@@ -40,7 +40,7 @@ const home = {
   headline: <>I build the product, then make sure it stays up.</>,
   subline: (
     <>
-      I'm Amey, a Hyderabad based engineer. By day, platform and observability at DP World.
+      I'm Amey, a Hyderabad based engineer. By day, platform and observability.
       <br /> The rest of the time, full-stack TypeScript and a few side projects that ship.
     </>
   ),
@@ -76,30 +76,9 @@ const about = {
     ),
   },
   work: {
-    display: true, // set to false to hide this section
+    display: false, // set to false to hide this section
     title: "Work Experience",
     experiences: [
-      {
-        company: "DP World",
-        timeframe: "July 2025 - Present",
-        role: "Platform & Observability Engineer",
-        achievements: [
-          <>
-            Build and run the observability stack: OpenTelemetry instrumentation feeding
-            VictoriaMetrics, Tempo, Loki and Grafana, so incidents start with evidence instead of
-            guesses.
-          </>,
-          <>
-            Operate workloads on Azure Kubernetes Service and automate the repetitive parts with
-            Ansible and Python.
-          </>,
-          <>
-            Do JVM forensics (heap, thread and GC analysis) when a service misbehaves, and automate
-            Jira/JSM workflows so tickets route themselves.
-          </>,
-        ],
-        images: [],
-      },
       {
         company: "Amazon",
         timeframe: "2020 - 2024",
