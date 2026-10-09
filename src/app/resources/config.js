@@ -3,38 +3,35 @@ const baseURL = "amey.khaire.dev";
 const routes = {
   "/": true,
   "/about": true,
-  "/work": false,
+  "/work": true,
   "/blog": true,
-  "/gallery": false,
 };
 
 // Enable password protection on selected routes
 // Set password in the .env file, refer to .env.example
-const protectedRoutes = {
-  "/work/automate-design-handovers-with-a-figma-to-code-pipeline": true,
-};
+const protectedRoutes = {};
 
 const style = {
   theme: "dark", // dark | light
-  neutral: "gray", // sand | gray | slate
-  brand: "emerald", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
-  accent: "orange", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+  neutral: "slate", // sand | gray | slate
+  brand: "cyan", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
+  accent: "cyan", // blue | indigo | violet | magenta | pink | red | orange | yellow | moss | green | emerald | aqua | cyan
   solid: "contrast", // color | contrast
   solidStyle: "flat", // flat | plastic
-  border: "playful", // rounded | playful | conservative
+  border: "conservative", // rounded | playful | conservative
   surface: "translucent", // filled | translucent
-  transition: "all", // all | micro | macro
+  transition: "micro", // all | micro | macro
 };
 
 const effects = {
   mask: {
-    cursor: true,
+    cursor: false,
     x: 0,
     y: 0,
     radius: 75,
   },
   gradient: {
-    display: true,
+    display: false,
     x: 50,
     y: 0,
     width: 100,
@@ -45,7 +42,7 @@ const effects = {
     opacity: 50,
   },
   dots: {
-    display: true,
+    display: false,
     size: 2,
     color: "brand-on-background-weak",
     opacity: 20,
@@ -77,7 +74,7 @@ const mailchimp = {
       radius: 100,
     },
     gradient: {
-      display: true,
+      display: false,
       x: 100,
       y: 50,
       width: 100,
