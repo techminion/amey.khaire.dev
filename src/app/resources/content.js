@@ -98,7 +98,14 @@ const about = {
             Jira/JSM workflows so tickets route themselves.
           </>,
         ],
-        images: [],
+        images: [
+          {
+            src: "/images/work/dpworld.svg",
+            alt: "DP World Logo",
+            width: 25,
+            height: 9,
+          },
+        ],
       },
       {
         company: "Amazon",
