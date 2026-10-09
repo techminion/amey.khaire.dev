@@ -6,7 +6,7 @@ const person = {
   get name() {
     return `${this.firstName} ${this.lastName}`;
   },
-  role: "Full-stack & Platform Engineer",
+  role: "Software Engineer",
   avatar: "/images/avatar.png",
   location: "Asia/Kolkata", // Expecting the IANA time zone identifier, e.g., 'Europe/Vienna'
   languages: ["English", "Hindi", "Marathi"], // optional: Leave the array empty if you don't want to display languages
@@ -139,7 +139,7 @@ const about = {
       {
         company: "Cybage",
         timeframe: "2019 - 2020",
-        role: "Full-stack & Platform Engineer",
+        role: "Software Engineer",
         achievements: [
           <>
             Streamlined the process of deployment for better ease of development and testing.
@@ -228,11 +228,5 @@ const blog = {
   // All posts will be listed on the /blog route
 };
 
-const work = {
-  label: "Work",
-  title: "Projects",
-  description: `Things ${person.name} has built`,
-  // Create new project pages by adding a new .mdx file to app/work/projects
-};
 
-export { person, social, home, about, blog, work };
+export { person, social, home, about, blog };

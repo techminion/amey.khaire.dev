@@ -5,7 +5,6 @@ export {
   effects,
   style,
   display,
-  mailchimp,
   baseURL,
 } from "@/app/resources/config";
 export {
@@ -14,5 +13,4 @@ export {
   home,
   about,
   blog,
-  work,
 } from "@/app/resources/content";
