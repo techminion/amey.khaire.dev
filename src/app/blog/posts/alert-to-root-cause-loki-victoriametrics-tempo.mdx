@@ -1,0 +1,141 @@
+---
+title: "From Alert to Root Cause: Correlating Loki, VictoriaMetrics and Tempo"
+publishedAt: "2026-10-10"
+summary: "How I move from an alert to a root cause by joining metrics, logs and traces on shared labels, time and traceId, walked through with a real (sanitised) thread pool saturation incident."
+tag: "Observability, Grafana"
+---
+
+Having metrics, logs and traces in the same Grafana isn't the hard part. The hard part is moving between them quickly when an alert fires and you don't yet know what's broken. Over time I've settled into a routine that relies on three joins: **shared labels**, **time**, and **traceId**. In this post I'll go through that routine and then apply it to a real incident, sanitised, where one node's task executor sat fully saturated for about four minutes.
+
+---
+
+## 1. The Flow I Actually Follow
+
+Every incident begins in the same place for me:
+
+1. The alert lands in our incident tool (JSM).
+2. I open the matching alert in Grafana to see the rule, the query and the labels.
+3. From there I go to **metrics, logs or traces**, depending on what kind of alert it is.
+
+I give each signal about **5–10 minutes**, and longer if the problem is complicated. The time box keeps me from staring at one dashboard for half an hour when the answer is in a different signal.
+
+---
+
+## 2. Shared Labels Are the Glue
+
+Correlation only works if every signal describes the world the same way. Across metrics (VictoriaMetrics), logs (Loki) and traces (Tempo), we use the same set of labels:
+
+- `site_name`
+- `env`
+- `service_name`
+- `container`
+- `host_name`
+
+Traces come from the **OpenTelemetry Java agent**. Because the same labels show up everywhere, a series in a metrics panel translates directly into a Loki selector, and that Loki selector narrows down to the requests worth tracing.
+
+Two queries I use all the time. For resource pressure per container:
+
+```promql
+sum by (site_name, host_name, container) (container_memory_percent_ratio)
+```
+
+For error volume per service in Loki:
+
+```logql
+sum by (service_name) (
+  count_over_time({site_name="...", env="...", filename="...", level="ERROR"}[5m])
+)
+```
+
+The label names in the two queries match, and that's deliberate: whatever I filter on in one, I can filter on in the other.
+
+---
+
+## 3. Time Is a Join Key Too (Normalise to UTC)
+
+The second join is time, and it's easy to get wrong. In the setup I'm describing:
+
+- Loki and the metrics are in **UTC**.
+- Host-level logs are written in **UTC+1**.
+- I'm in **IST** (UTC+5:30).
+
+That's three clocks for one incident. My rule now is to **convert everything to UTC before matching windows**. If you don't, you'll confidently pin a log burst on something that happened an hour, or five and a half hours, away from it.
+
+---
+
+## 4. traceId Is the Bridge Into Tempo
+
+The third join is traceId. Today I get into Tempo by **copying a traceId from a log line** and pasting it into the search. It's manual, but it's dependable: once I've found the right log lines for the right host and window, any one of them gets me to a full trace.
+
+---
+
+## 5. The Incident: One Node, Fifty Threads, Four Minutes
+
+Here's the routine applied to a real incident, with identifying details removed. The service is a Java service on a multi-region platform, running on **4 nodes**. Each node has a task executor pool with a **core size of 50**.
+
+### **5.1. What the metrics showed**
+
+At baseline the pool is close to idle, at or below **0.25 tasks/s**. During the incident, on **one node only**:
+
+- Active threads went from **0 to 50**: 100% saturated, holding at exactly **50/50 for about 3.5 minutes**.
+- The queue grew to **7,879 tasks**:
+
+```promql
+max_over_time(executor_queued_tasks[18m])
+```
+
+- That node's completion rate climbed from **2.8 to 38 tasks/s** while the other nodes stayed idle.
+
+The query that settled it was:
+
+```promql
+rate(executor_completed_tasks_total[1m])
+```
+
+broken down by `host_name`. Only one node lit up. That pattern fits our load balancing, which uses sticky sessions plus by-busyness routing: a burst of traffic from one client ends up on one node.
+
+### **5.2. The alert was late, and that's expected**
+
+The alert fired after its 5-minute `for` clause, which was about the time the backlog was draining: the rate spiked to **142 tasks/s**, threads fell back to 0 and the queue emptied. It resolved on its own about a minute later. There was **no restart, no OOM and no failed import**. A short second trip roughly two hours later also cleared by itself.
+
+### **5.3. Lesson: "[no value]" doesn't mean no data**
+
+The alert summary showed **`[no value]`** for host and instance. My first thought was missing data. It wasn't: the **reduce step in the alert rule dropped the labels**. The fix is to go to the **raw series** in Explore, where every label is still there. Treat an empty label in an alert summary as a hint about the alert rule, not about your telemetry.
+
+### **5.4. What the logs showed: who and why**
+
+With the host and window known (in UTC), I queried Loki for the same `host_name` and time range. There were **dozens of entries from an import endpoint's controller**, all from **the same external integration**: a bulk-import burst from one external caller. That answered *who* and *why now*.
+
+### **5.5. What the trace showed: why each task was expensive**
+
+I copied a traceId from one of those log lines into Tempo. The trace showed a save chain where, **per request**:
+
+- a master-location lookup took about **1.6s**
+- a validation-config step took about **2.7s**
+
+The logs had more clues: **heavy INFO-level logging from the tracing library**, and a **full reference-data cache dumped on every request**. That's a lot of synchronous work for each task. Multiply it by a burst, and fifty threads run out quickly.
+
+---
+
+## 6. What Each Signal Contributed
+
+Put together, each signal answered a different question:
+
+- **Metrics:** *which* pool, *which* node, and *how bad*.
+- **Logs:** *what* workload, and *who* sent it.
+- **Trace:** *why* each task was expensive.
+
+The root cause wasn't a single bug. It was the combination: **a bursty external import, sticky load balancing sending it to one node, and heavy synchronous work per request** added up to four minutes of full saturation.
+
+---
+
+## 7. What I'd Improve Next
+
+Right now the joins are manual: copied labels, converted timestamps and pasted traceIds. Things I'd like to try:
+
+- **Derived fields in Loki** so a traceId in a log line links straight to Tempo.
+- **Exemplars** on the executor metrics so I can go from a spike directly to a sample trace.
+- **Alert rules that keep `host_name`** through the reduce step, so the summary names the node.
+- A dashboard default of **UTC** to remove one clock from the problem.
+
+None of these are needed for the routine above, though. Consistent labels, one timezone and a traceId in your logs already take you a long way from "an alert fired" to "here's why".
